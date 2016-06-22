@@ -6,6 +6,6 @@ angular.module('myApp.Board')
         $scope.board = [
             'ships' => [],
         ];
-        console.log('Board');
+        console.log('Board commit 2');
 
 }]);
