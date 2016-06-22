@@ -7,6 +7,11 @@ angular.module('myApp', [
 ]).
 config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {
   $locationProvider.hashPrefix('!');
+  
+   $routeProvider.when('/', {
+    templateUrl: 'Board/board.html',
+    controller: 'BoardController'
+  });
 
   $routeProvider.otherwise({redirectTo: '/'});
 }]);
