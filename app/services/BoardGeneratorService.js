@@ -4,7 +4,8 @@
         var board = {
             labels: {},
             coordinates: [],
-            ships: []
+            ships: [],
+            steps: 0
         };
         
         function init() {
@@ -42,31 +43,87 @@
         }
         
         function generateBoardShips() {
-            var shipsCount = ConfigService.getShipsCount();
             var configShips = ConfigService.getShips();
 
             angular.forEach(configShips, function(ship) {
-                var randomStartingCoordinate = getRandomStartingPosition();
-
-                ship.coordinates = [];
-                ship.coordinates.push({x: randomStartingCoordinate.x, y: randomStartingCoordinate.y, value: '.', status: 'taken'});
-                board.coordinates[randomStartingCoordinate.x][randomStartingCoordinate.y].status = 'taken';
-                board.ships.push(ship);
-                
+                 generateShipCoordinates(ship);
             });
         }
         
+        function generateShipCoordinates(ship) {
+            var freePositions = [];
+            var randomStartingCoordinate = getRandomStartingPosition();
+            ship.coordinates = [];
+            
+            var shipSize = ship.size;
+           
+            
+            var horizontalDirection = (randomStartingCoordinate.x > ConfigService.getBoardSize()/2) ? 'decrease': 'increase';
+            var verticalDirection = (randomStartingCoordinate.y > ConfigService.getBoardSize()/2) ? 'decrease': 'increase';
+            var orientation = ['horizontal', 'vertical'];
+            var randomDirection = orientation[Math.floor(Math.random()*orientation.length)];
+            
+            if (randomDirection === 'horizontal' && horizontalDirection === 'decrease') {
+                var startCoordinate = randomStartingCoordinate.x;
+                var endCoordinate = startCoordinate - shipSize;
+                for (var i = startCoordinate; i > endCoordinate; i --) {
+                    if (typeof board.coordinates[i][randomStartingCoordinate.y] !== "undefined" && board.coordinates[i][randomStartingCoordinate.y].status !== 'taken') {
+                        freePositions.push({x: i, y: randomStartingCoordinate.y, value: '.', status: 'taken'});
+                    }
+                }
+            }
+            if (randomDirection === 'horizontal' && horizontalDirection === 'increase') {
+                var startCoordinate = randomStartingCoordinate.x;
+                var endCoordinate = startCoordinate + shipSize;
+                for (var i = startCoordinate; i < endCoordinate; i ++) {
+                    if (typeof board.coordinates[i][randomStartingCoordinate.y] !== "undefined" && board.coordinates[i][randomStartingCoordinate.y].status !== 'taken') {
+                        freePositions.push({x: i, y: randomStartingCoordinate.y, value: '.', status: 'taken'});
+                    }
+                }
+            }
+            if (randomDirection === 'vertical' && verticalDirection === 'decrease') {
+                var startCoordinate = randomStartingCoordinate.y;
+                var endCoordinate = startCoordinate - shipSize;
+                for (var i = startCoordinate; i > endCoordinate; i --) {
+                    if (typeof board.coordinates[randomStartingCoordinate.x][i] !== "undefined" && board.coordinates[randomStartingCoordinate.x][i].status !== 'taken') {
+                        freePositions.push({x: randomStartingCoordinate.y, y: i, value: '.', status: 'taken'});
+                    }
+                }
+            }
+            if (randomDirection === 'vertical' && verticalDirection === 'increase') {
+                var startCoordinate = randomStartingCoordinate.y;
+                var endCoordinate = startCoordinate + shipSize;
+                for (var i = startCoordinate; i < endCoordinate; i ++) {
+                   if (typeof board.coordinates[randomStartingCoordinate.x][i] !== "undefined" && board.coordinates[randomStartingCoordinate.x][i].status !== 'taken') {
+                        freePositions.push({x: randomStartingCoordinate.y, y: i, value: '.', status: 'taken'});
+                    }
+                }
+            }
+            
+            // if positions found for the whole ship - add coordinates to ship object
+            if(freePositions.length === shipSize) {
+                angular.forEach(freePositions, function(value) {
+                    console.log(value);
+                    ship.coordinates.push(value);
+                    board.coordinates[value.x][value.y].status = 'taken';
+                    board.ships.push(ship);
+                });
+            } else {
+                return generateShipCoordinates(ship);
+            }
+        }
+        
         function getRandomStartingPosition(){
-            var randomX = Math.floor((Math.random() * ConfigService.getBoardSize()));
-            var randomY = Math.floor((Math.random() * ConfigService.getBoardSize()));
+            var randomX = Math.floor((Math.random() * (ConfigService.getBoardSize() -1)));
+            var randomY = Math.floor((Math.random() * (ConfigService.getBoardSize() -1)));
 
-            if(typeof board.coordinates[randomX][randomY] !== 'undefined' && board.coordinates[randomX][randomY].status === 'free') {
+            if(typeof board.coordinates[randomX][randomY] !== "undefined" && board.coordinates[randomX][randomY].status === 'free') {
                 return { x: randomX,  y: randomY};
             } else {
                 getRandomStartingPosition();
             }
         }
-        
+       
         return {
             init: init
         };

@@ -8,7 +8,7 @@
         $scope.currentCoordinates = '';
         // init board
         $scope.board = BoardGeneratorService.init();
-        console.log($scope.board);
+        
         $scope.submitCoordinates = function() {
             if (typeof($scope.currentCoordinates) !=="undefined" && $scope.currentCoordinates.length >= 2) {
                 // get second character of coordinates
@@ -20,21 +20,18 @@
                 // board labels
                 var xCoordinate = $scope.board.labels.x.indexOf(xLabel);
                 var yCoordinate = $scope.board.labels.y.indexOf(yLabel);
-                console.log($scope.board.labels.x, xCoordinate);
-                console.log($scope.board.labels.y, yCoordinate);
                 if (xCoordinate !== -1 && yCoordinate !== -1) {
                     //set submitted coordinates as marked on board
                     checkBoardHit(xCoordinate, yCoordinate);
                 } else {
                     // show error on wrong coordinates (out of board range)
-                    toastr.error('Bad coordinates!');
+                    toastr.error('Wrong coordinates!');
                }
             } else {
                 toastr.info('Provide at least 2 coordinates!');
             }
             // reset input field
             $scope.currentCoordinates = '';
-            console.log($scope.board);
         };
         
         // check if we have a hit on given coordinate
@@ -43,6 +40,7 @@
                 toastr.success('Ship hit!');
                 $scope.board.coordinates[y][x].status = 'hit';
                 $scope.board.coordinates[y][x].value = 'x';
+                console.log($scope.board);
             } else {
                 $scope.board.coordinates[y][x].status = 'open';
                 $scope.board.coordinates[y][x].value = '-';
