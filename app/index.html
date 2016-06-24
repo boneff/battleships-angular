@@ -1,24 +1,29 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html lang="en" ng-app="myApp" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html lang="en" ng-app="myApp" class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html lang="en" ng-app="myApp" class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html lang="en" ng-app="myApp" class="no-js"> <!--<![endif]-->
+<html lang="en" ng-app="myApp" class="no-js">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Battleships</title>
-  <meta name="description" content="">
+  <meta name="description" content="Battleship game">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="vendor/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="vendor/css/toastr.min.css" />
   <link rel="stylesheet" href="app.css">
 </head>
 <body>
-  <div ng-view></div>
-
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.js"></script>
-  <script src="https://code.angularjs.org/1.5.7/angular-route.min.js"></script>
+    
+  <div class="container text-center" ng-view></div>
+  
+  <script src="vendor/js/jquery2.js"></script>
+  <script src="vendor/js/toastr.min.js"></script>
+  <script src="vendor/js/angular.min.js"></script>
+  <script src="vendor/js/angular.route.min.js"></script>
   <script src="app.js"></script>
+   <!-- services -->
+  <script src="services/ConfigService.js"></script>
+  <script src="services/BoardGeneratorService.js"></script>
   <!-- board -->
-  <script src="Board/BoardModule.js"></script>
-  <script src="Board/BoardController.js"></script>
+  <script src="controllers/Board/BoardModule.js"></script>
+  <script src="controllers/Board/BoardController.js"></script>
 </body>
 </html>

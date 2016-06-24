@@ -1,0 +1,17 @@
+<div class="col-xs-6 col-xs-offset-3">
+    <div class="table-responsive">
+        <table class="table">
+            <tr><td></td><td ng-repeat="rowLabel in board.labels.x">{{rowLabel}}</td></tr>
+            <tr ng-repeat="row in board.coordinates track by $index">
+                <td>{{board.labels.y[$index]}}</td><td ng-repeat="col in row">{{col.value}}</td>
+             </tr>
+        </table>
+    </div>
+    <form class="form-inline" ng-submit="submitCoordinates()">
+      <div class="form-group">
+        <label for="coordinates">Enter coordinates (row, col), e.g. A5</label>
+        <input type="text" class="form-control" ng-model="currentCoordinates" autocomplete="off" autofocus="true" id="coordinates" minlength="2" required  />
+      </div>
+      <button type="submit" class="btn btn-default">Submit</button>
+    </form>
+</div>
