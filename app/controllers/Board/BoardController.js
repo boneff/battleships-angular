@@ -3,22 +3,20 @@
 
     angular.module('myApp.Board')
 
-    .controller('BoardController', ['$scope', 'BoardGeneratorService',  function($scope, BoardGeneratorService) {
+    .controller('BoardController', ['$scope', '$window', 'BoardGeneratorService',  function($scope, $window, BoardGeneratorService) {
         // variable bond to form input field - populated on submit
         $scope.currentCoordinates = '';
         $scope.gameSteps = 0;
-        $scope.gameFinished = 0;
+        $scope.gameFinished = false;
         // init board
         $scope.board = BoardGeneratorService.init();
         
         // add watcher of board ship elements
         // once they are all removed - finsh game
         $scope.$watch('board.ships.length', function() {
-            if ($scope.board.ships.length === 0) {
-                $scope.$apply(function() {
-                    $scope.gameFinished = 1;
-                    console.log($scope.gameFinished);
-                });
+            var shipsLeft = $scope.board.ships.length;
+            if (shipsLeft === 0) {
+                $scope.gameFinished = 1;
             }
         });
         
@@ -49,7 +47,7 @@
                     // show error on wrong coordinates (out of board range)
                     toastr.error('Wrong coordinates!');
                }
-               $scope.gameSteps ++;
+               $scope.gameSteps += 1;
             } else {
                 toastr.info('Provide at least 2 coordinates!');
             }
