@@ -46,18 +46,25 @@
             var configShips = ConfigService.getShips();
 
             angular.forEach(configShips, function(ship) {
-                var randomX = Math.floor((Math.random() * ConfigService.getBoardSize()));
-                var randomY = Math.floor((Math.random() * ConfigService.getBoardSize()));
-                var randomStartingCoordinate = [randomX, randomY];
+                var randomStartingCoordinate = getRandomStartingPosition();
 
                 ship.coordinates = [];
-                if(typeof board.coordinates[randomX][randomY] !== 'undefined' && board.coordinates[randomX][randomY].status === 'free') {
-                    ship.coordinates.push({x: randomX, y: randomY, value: '.', status: 'taken'});
-                    board.coordinates[randomX][randomY].status = 'taken';
-                }
+                ship.coordinates.push({x: randomStartingCoordinate.x, y: randomStartingCoordinate.y, value: '.', status: 'taken'});
+                board.coordinates[randomStartingCoordinate.x][randomStartingCoordinate.y].status = 'taken';
                 board.ships.push(ship);
                 
             });
+        }
+        
+        function getRandomStartingPosition(){
+            var randomX = Math.floor((Math.random() * ConfigService.getBoardSize()));
+            var randomY = Math.floor((Math.random() * ConfigService.getBoardSize()));
+
+            if(typeof board.coordinates[randomX][randomY] !== 'undefined' && board.coordinates[randomX][randomY].status === 'free') {
+                return { x: randomX,  y: randomY};
+            } else {
+                getRandomStartingPosition();
+            }
         }
         
         return {
