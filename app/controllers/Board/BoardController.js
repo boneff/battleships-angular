@@ -8,9 +8,9 @@
         $scope.currentCoordinates = '';
         // init board
         $scope.board = BoardGeneratorService.init();
-
+        console.log($scope.board);
         $scope.submitCoordinates = function() {
-            if ($scope.currentCoordinates.length >= 2) {
+            if (typeof($scope.currentCoordinates) !=="undefined" && $scope.currentCoordinates.length >= 2) {
                 // get second character of coordinates
                 var xLabel = parseInt($scope.currentCoordinates.toUpperCase().charAt(1) + $scope.currentCoordinates.toUpperCase().charAt(2)); 
                 // get first character of coordinates 
@@ -20,18 +20,34 @@
                 // board labels
                 var xCoordinate = $scope.board.labels.x.indexOf(xLabel);
                 var yCoordinate = $scope.board.labels.y.indexOf(yLabel);
+                console.log($scope.board.labels.x, xCoordinate);
+                console.log($scope.board.labels.y, yCoordinate);
                 if (xCoordinate !== -1 && yCoordinate !== -1) {
                     //set submitted coordinates as marked on board
-                    $scope.board.coordinates[yCoordinate][xCoordinate].value = 'x';
-                    toastr.success('Ship was hit!');
+                    checkBoardHit(xCoordinate, yCoordinate);
                 } else {
                     // show error on wrong coordinates (out of board range)
                     toastr.error('Bad coordinates!');
                }
-            } 
+            } else {
+                toastr.info('Provide at least 2 coordinates!');
+            }
             // reset input field
             $scope.currentCoordinates = '';
+            console.log($scope.board);
         };
         
+        // check if we have a hit on given coordinate
+        function checkBoardHit(x, y) {
+            if (typeof $scope.board.coordinates[y][x] !=="undefined" && $scope.board.coordinates[y][x].status === 'taken') {
+                toastr.success('Ship hit!');
+                $scope.board.coordinates[y][x].status = 'hit';
+                $scope.board.coordinates[y][x].value = 'x';
+            } else {
+                $scope.board.coordinates[y][x].status = 'open';
+                $scope.board.coordinates[y][x].value = '-';
+                toastr.info('Missed!');
+            }
+        }
     }]);
 })();
