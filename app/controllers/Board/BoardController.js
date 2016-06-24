@@ -6,8 +6,30 @@
     .controller('BoardController', ['$scope', 'BoardGeneratorService',  function($scope, BoardGeneratorService) {
         // variable bond to form input field - populated on submit
         $scope.currentCoordinates = '';
+        $scope.gameSteps = 0;
+        $scope.gameFinished = 0;
         // init board
         $scope.board = BoardGeneratorService.init();
+        
+        // add watcher of board ship elements
+        // once they are all removed - finsh game
+        $scope.$watch('board.ships.length', function() {
+            if ($scope.board.ships.length === 0) {
+                $scope.$apply(function() {
+                    $scope.gameFinished = 1;
+                    console.log($scope.gameFinished);
+                });
+            }
+        });
+        
+        $scope.restartGame = function() {
+            // variable bond to form input field - populated on submit
+            $scope.currentCoordinates = '';
+            $scope.gameSteps = 0;
+            $scope.gameFinished = false;
+            // init board
+            $scope.board = BoardGeneratorService.init();
+        };
         
         $scope.submitCoordinates = function() {
             if (typeof($scope.currentCoordinates) !=="undefined" && $scope.currentCoordinates.length >= 2) {
@@ -27,6 +49,7 @@
                     // show error on wrong coordinates (out of board range)
                     toastr.error('Wrong coordinates!');
                }
+               $scope.gameSteps ++;
             } else {
                 toastr.info('Provide at least 2 coordinates!');
             }
@@ -40,7 +63,19 @@
                 toastr.success('Ship hit!');
                 $scope.board.coordinates[y][x].status = 'hit';
                 $scope.board.coordinates[y][x].value = 'x';
-                console.log($scope.board);
+                // check each ship coordinates to see which we hit
+                angular.forEach($scope.board.ships, function(ship, index){
+                    angular.forEach(ship.coordinates, function(value){
+                        if(value.x === y && value.y === x) {
+                            console.log(value.x, value.y);
+                            ship.size --;
+                            if (ship.size === 0) {
+                                toastr.success('Ship sunk!');
+                                $scope.board.ships.splice(index, 1);
+                            }
+                        }
+                    });
+                });
             } else {
                 $scope.board.coordinates[y][x].status = 'open';
                 $scope.board.coordinates[y][x].value = '-';

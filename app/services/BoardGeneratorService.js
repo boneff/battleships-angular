@@ -103,11 +103,10 @@
             // if positions found for the whole ship - add coordinates to ship object
             if(freePositions.length === shipSize) {
                 angular.forEach(freePositions, function(value) {
-                    console.log(value);
                     ship.coordinates.push(value);
                     board.coordinates[value.x][value.y].status = 'taken';
-                    board.ships.push(ship);
                 });
+                board.ships.push(ship);
             } else {
                 return generateShipCoordinates(ship);
             }
